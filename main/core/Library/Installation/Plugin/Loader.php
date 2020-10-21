@@ -57,8 +57,6 @@ class Loader
 
     private function getPluginInstance($pluginPath, $pluginFqcn)
     {
-        require_once $pluginPath;
-
         if (!class_exists($pluginFqcn)) {
             throw new RuntimeException(
                 "Class '{$pluginFqcn}' not found in '{$pluginPath}'.",

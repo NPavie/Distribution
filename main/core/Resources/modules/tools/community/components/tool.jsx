@@ -43,8 +43,14 @@ const CommunityTool = (props) =>
         disabled: !props.canAdministrate || props.contextType !== toolConstants.TOOL_WORKSPACE
       }, {
         path: '/profile/:publicUrl',
-        component: Profile,
-        onEnter: (params = {}) => props.loadUser(params.publicUrl)
+        render(routerProps) {
+          return (
+            <Profile
+              path={props.path + '/profile/' + routerProps.match.params.publicUrl}
+              publicUrl={routerProps.match.params.publicUrl}
+            />
+          )
+        }
       }
     ]}
   />

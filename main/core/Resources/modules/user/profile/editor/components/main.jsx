@@ -2,10 +2,8 @@ import React from 'react'
 import {PropTypes as T} from 'prop-types'
 import {connect} from 'react-redux'
 
-import {selectors as toolSelectors} from '#/main/core/tool/store'
 import {selectors as detailsSelectors} from '#/main/app/content/form/store/selectors'
 import {Vertical} from '#/main/app/content/tabs/components/vertical'
-import {route} from '#/main/core/user/routing'
 import {UserDetails} from '#/main/core/user/components/details'
 import {ProfileFacets} from '#/main/core/user/profile/components/facets'
 import {ProfileFacet} from '#/main/core/user/profile/editor/components/facet'
@@ -20,7 +18,7 @@ const ProfileEditComponent = props =>
 
       {props.facets && 1 < props.facets.length &&
         <Vertical
-          basePath={route(props.user, props.path) + '/edit'}
+          basePath={props.path + '/edit'}
           tabs={props.facets.map(facet => ({
             icon: facet.icon,
             title: facet.title,
@@ -32,7 +30,7 @@ const ProfileEditComponent = props =>
 
     <div className="user-profile-content col-md-9">
       <ProfileFacets
-        prefix={route(props.user, props.path) + '/edit'}
+        prefix={props.path + '/edit'}
         facets={props.facets}
         facetComponent={ProfileFacet}
         openFacet={props.openFacet}
@@ -41,7 +39,7 @@ const ProfileEditComponent = props =>
   </div>
 
 ProfileEditComponent.propTypes = {
-  path: T.string,
+  path: T.string.isRequired,
   user: T.object.isRequired,
   facets: T.array.isRequired,
   openFacet: T.func.isRequired
@@ -53,7 +51,6 @@ ProfileEditComponent.defaultProps = {
 
 const ProfileEdit = connect(
   (state) => ({
-    path: toolSelectors.path(state),
     user: detailsSelectors.data(detailsSelectors.form(state, selectors.FORM_NAME)),
     facets: selectors.facets(state)
   }),

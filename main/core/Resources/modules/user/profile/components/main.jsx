@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {PropTypes as T} from 'prop-types'
 
 import {Routes} from '#/main/app/router'
@@ -14,50 +14,77 @@ import {ProfileShow} from '#/main/core/user/profile/player/components/main'
 // TODO : remove hard dependency to plugin
 import {Tracking} from '#/plugin/analytics/user/tracking/containers/main'
 
-const ProfileComponent = props => {
-  if (!props.loaded) {
-    return (
-      <ContentLoader
-        size="lg"
-        description="Nous chargeons votre utilisateur..."
-      />
-    )
+class Profile extends Component {
+  componentDidMount() {
+    if (!this.props.loaded) {
+      this.props.open(this.props.publicUrl)
+    }
   }
 
-  return(
-    <UserPage
-      showBreadcrumb={showToolBreadcrumb(props.currentContext.type, props.currentContext.data)}
-      breadcrumb={getToolBreadcrumb('community', props.currentContext.type, props.currentContext.data)}
-      user={props.user}
-      path={props.path + '/' + props.user.publicUrl}
-      currentUser={props.currentUser}
-      history={props.history}
-    >
-      <Routes
-        path={props.path + '/' + props.user.publicUrl}
-        routes={[
-          {
-            path: '/show',
-            component: ProfileShow
-          }, {
-            path: '/edit',
-            component: ProfileEdit,
-            disabled: !hasPermission('edit', props.user)
-          }, {
-            path: '/dashboard',
-            component: Tracking,
-            disabled: !hasPermission('show_dashboard', props.user)
-          }
-        ]}
-        redirect={[
-          {from: '/', exact: true, to: '/show'}
-        ]}
-      />
-    </UserPage>
-  )
+  componentDidUpdate(prevProps) {
+    if (!this.props.loaded && this.props.loaded !== prevProps.loaded) {
+      this.props.open(this.props.publicUrl)
+    }
+  }
+
+  render() {
+    if (!this.props.loaded) {
+      return (
+        <ContentLoader
+          size="lg"
+          description="Nous chargeons votre utilisateur..."
+        />
+      )
+    }
+
+    return (
+      <UserPage
+        showBreadcrumb={showToolBreadcrumb(this.props.currentContext.type, this.props.currentContext.data)}
+        breadcrumb={getToolBreadcrumb('community', this.props.currentContext.type, this.props.currentContext.data)}
+        user={this.props.user}
+        path={this.props.path}
+        currentUser={this.props.currentUser}
+        history={this.props.history}
+      >
+        <Routes
+          path={this.props.path}
+          routes={[
+            {
+              path: '/show',
+              render: () => {
+                return (
+                  <ProfileShow
+                    path={this.props.path}
+                  />
+                )
+              }
+            }, {
+              path: '/edit',
+              disabled: !hasPermission('edit', this.props.user),
+              render: () => {
+                return (
+                  <ProfileEdit
+                    path={this.props.path}
+                  />
+                )
+              }
+            }, {
+              path: '/dashboard',
+              component: Tracking,
+              disabled: !hasPermission('show_dashboard', this.props.user)
+            }
+          ]}
+          redirect={[
+            {from: '/', exact: true, to: '/show'}
+          ]}
+        />
+      </UserPage>
+    )
+  }
 }
 
-ProfileComponent.propTypes = {
+Profile.propTypes = {
+  publicUrl: T.string.isRequired,
   history: T.object.isRequired,
   currentContext: T.object,
   user: T.shape(
@@ -68,9 +95,10 @@ ProfileComponent.propTypes = {
   ).isRequired,
   path: T.string,
   loaded: T.bool,
-  parameters: T.object.isRequired
+  parameters: T.object.isRequired,
+  open: T.func.isRequired
 }
 
 export {
-  ProfileComponent
+  Profile
 }
