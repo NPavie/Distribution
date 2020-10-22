@@ -429,7 +429,12 @@ class UserRepository extends ServiceEntityRepository implements UserProviderInte
     {
         $dql = '
             SELECT u FROM Claroline\CoreBundle\Entity\User u
-            JOIN u.roles r WHERE r IN (:roles) AND u.isRemoved = false
+            JOIN u.roles r 
+            JOIN u.groups g 
+            JOIN g.roles gr
+            WHERE (r IN (:roles) OR gr IN (:roles)) 
+            AND u.isRemoved = false 
+            AND u.isEnabled = true
             ORDER BY u.lastName
         ';
 
