@@ -213,6 +213,13 @@ services:
         tags:
             - { name: 'console.command', command: 'claroline:user:create' }
 
+    Claroline\CoreBundle\Command\User\MakeResetPasswordURLCommand:
+        arguments:
+            - '@Claroline\CoreBundle\Manager\UserManager'
+            - '@router'
+        tags:
+            - { name: 'console.command', command: 'claroline:user:password-reset-url' }
+
     Claroline\CoreBundle\Command\User\AddGroupCommand:
         arguments:
             - '@Claroline\AppBundle\Persistence\ObjectManager'
