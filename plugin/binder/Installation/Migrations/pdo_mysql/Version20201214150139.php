@@ -15,10 +15,10 @@ class Version20201214150139 extends AbstractMigration
     public function up(Schema $schema)
     {
         $this->addSql("
-            CREATE TABLE sidpt_document (
+            CREATE TABLE sidpt__document (
                 id INT AUTO_INCREMENT NOT NULL, 
-                longTitle LONGTEXT DEFAULT NULL, 
-                centerTitle TINYINT(1) NOT NULL, 
+                long_title LONGTEXT DEFAULT NULL, 
+                center_title TINYINT(1) NOT NULL, 
                 uuid VARCHAR(36) NOT NULL, 
                 resourceNode_id INT DEFAULT NULL, 
                 UNIQUE INDEX UNIQ_F4A7C431D17F50A6 (uuid), 
@@ -27,7 +27,7 @@ class Version20201214150139 extends AbstractMigration
             ) DEFAULT CHARACTER SET UTF8 COLLATE `UTF8_unicode_ci` ENGINE = InnoDB
         ");
         $this->addSql("
-            CREATE TABLE sidpt_document_widgets (
+            CREATE TABLE sidpt__document_widgets (
                 document_id INT NOT NULL, 
                 widget_container_id INT NOT NULL, 
                 INDEX IDX_21883A0CC33F7837 (document_id), 
@@ -38,18 +38,18 @@ class Version20201214150139 extends AbstractMigration
             ) DEFAULT CHARACTER SET UTF8 COLLATE `UTF8_unicode_ci` ENGINE = InnoDB
         ");
         $this->addSql("
-            ALTER TABLE sidpt_document 
+            ALTER TABLE sidpt__document 
             ADD CONSTRAINT FK_F4A7C431B87FAB32 FOREIGN KEY (resourceNode_id) 
             REFERENCES claro_resource_node (id) 
             ON DELETE CASCADE
         ");
         $this->addSql("
-            ALTER TABLE sidpt_document_widgets 
+            ALTER TABLE sidpt__document_widgets 
             ADD CONSTRAINT FK_21883A0CC33F7837 FOREIGN KEY (document_id) 
-            REFERENCES sidpt_document (id)
+            REFERENCES sidpt__document (id)
         ");
         $this->addSql("
-            ALTER TABLE sidpt_document_widgets 
+            ALTER TABLE sidpt__document_widgets 
             ADD CONSTRAINT FK_21883A0C581122C3 FOREIGN KEY (widget_container_id) 
             REFERENCES claro_widget_container (id)
         ");
@@ -58,14 +58,14 @@ class Version20201214150139 extends AbstractMigration
     public function down(Schema $schema)
     {
         $this->addSql("
-            ALTER TABLE sidpt_document_widgets 
+            ALTER TABLE sidpt__document_widgets 
             DROP FOREIGN KEY FK_21883A0CC33F7837
         ");
         $this->addSql("
-            DROP TABLE sidpt_document
+            DROP TABLE sidpt__document
         ");
         $this->addSql("
-            DROP TABLE sidpt_document_widgets
+            DROP TABLE sidpt__document_widgets
         ");
     }
 }

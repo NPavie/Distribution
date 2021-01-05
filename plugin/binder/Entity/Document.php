@@ -11,27 +11,31 @@
 
 namespace Sidpt\BinderBundle\Entity;
 
-use Claroline\CoreBundle\Entity\Resource\AbstractResource;
 use Claroline\CoreBundle\Entity\Widget\WidgetContainer;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
+
 use Claroline\AppBundle\Entity\Identifier\Uuid;
+use Claroline\CoreBundle\Entity\Resource\AbstractResource;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="sidpt_document")
+ *
+ * @ORM\Entity()
+ * @ORM\Table(name="sidpt__document")
  */
 class Document extends AbstractResource
 {
     use Uuid;
+    
     /**
-     * @ORM\Column(nullable=true, type="text")
+     * @ORM\Column(name="long_title", nullable=true, type="text")
      */
     private $longTitle = '';
 
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(name="center_title", type="boolean")
      */
     private $centerTitle = false;
 
@@ -40,11 +44,12 @@ class Document extends AbstractResource
      *      targetEntity="Claroline\CoreBundle\Entity\Widget\WidgetContainer",
      *      cascade={"persist","remove"}
      * )
-     * @ORM\JoinTable(name="sidpt_document_widgets",
+     * @ORM\JoinTable(
+     *      name="sidpt__document_widgets",
      *      joinColumns={
-                @ORM\JoinColumn(name="document_id", referencedColumnName="id")},
+     *          @ORM\JoinColumn(name="document_id", referencedColumnName="id")},
      *          inverseJoinColumns={
-                    @ORM\JoinColumn(name="widget_container_id", referencedColumnName="id", unique=true)}
+     *             @ORM\JoinColumn(name="widget_container_id", referencedColumnName="id", unique=true)}
      *      )
      *
      * @var WidgetContainer[]|ArrayCollection
@@ -52,7 +57,7 @@ class Document extends AbstractResource
     private $widgetContainers;
 
     /**
-     * HomeTab constructor.
+     * Document constructor.
      */
     public function __construct()
     {
@@ -87,6 +92,9 @@ class Document extends AbstractResource
         return $found;
     }
 
+    /**
+     * @param WidgetContainer
+     */
     public function addWidgetContainer(WidgetContainer $widgetContainer)
     {
         if (!$this->widgetContainers->contains($widgetContainer)) {
@@ -94,6 +102,9 @@ class Document extends AbstractResource
         }
     }
 
+    /**
+     * @param  WidgetContainer
+     */
     public function removeWidgetContainer(WidgetContainer $widgetContainer)
     {
         if ($this->widgetContainers->contains($widgetContainer)) {
@@ -101,23 +112,50 @@ class Document extends AbstractResource
         }
     }
 
+    /**
+     * @return [type]
+     */
     public function getLongTitle()
     {
         return $this->longTitle;
     }
 
+    /**
+     * @param [type]
+     */
     public function setLongTitle($longTitle)
     {
         $this->longTitle = $longTitle;
     }
 
+    /**
+     * @return boolean
+     */
     public function isCenterTitle()
     {
         return $this->centerTitle;
     }
 
+    /**
+     * @param [type]
+     */
     public function setCenterTitle($centerTitle)
     {
         $this->centerTitle = $centerTitle;
     }
+
+    public function __toString()
+    {
+        $display = "{";
+        $display .= "\"id\":\"{$this->getUuid()}\",";
+        $display .= "\"longtitle\":\"{$this->getLongTitle()}\",";
+        $display .= "\"widgets\":[";
+        foreach ($this->getWidgetContainers() as $widgetContainer) {
+            $display .= "\"{$widgetContainer->getUuid()}\"";
+        }
+        $display .= "]";
+        $display .= "}";
+        return $display;
+    }
+
 }

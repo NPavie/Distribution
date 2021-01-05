@@ -62,7 +62,7 @@ module.exports = {
 
     // dev tools
     hotModuleReplacement(),
-    notifier(),
+    notifier()
     //circularDependency()
   ],
   optimization: {

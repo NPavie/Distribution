@@ -34,7 +34,6 @@ class DocumentListener
         $this->om = $om;
         $this->config = $config;
         $this->serializer = $serializer;
-
     }
 
     public function onLoad(LoadResourceEvent $event)
@@ -43,10 +42,9 @@ class DocumentListener
         $document = $event->getResource();
 
         $event->setData([
-            'file' => $this->serializer->serialize($document)
+            'clarodoc' => $this->serializer->serialize($document)
         ]);
         $event->stopPropagation();
-
     }
 
 //    public function onCopy(CopyResourceEvent $event)
@@ -56,6 +54,4 @@ class DocumentListener
 //
 //        // copy the document only (not the widgets)
 //    }
-
-
 }
